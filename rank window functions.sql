@@ -94,5 +94,17 @@ ntile(3) over(order by sales desc) Buckets
 from Sales.Orders
 )t
 
--- cume_dist function
--- percent_rank function
+-- cume_dist function(position number / number of rows)
+-- percent_rank function(position number - 1 / number of rows -1)
+-- find the products that fall within the highest 40% of the prices
+select
+*,
+concat(DistRank * 100,'%') DiscRankPercent
+from(
+select
+Product,
+Price,
+CUME_DIST() over(order by Price desc) DistRank,
+percent_rank() over(order by Price desc) PercentRank
+from Sales.Products)t
+where DistRank <= 0.4
